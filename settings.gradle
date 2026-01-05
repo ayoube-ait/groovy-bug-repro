@@ -1,0 +1,4 @@
+rootProject.name = 'groovy-bug-repro'
+
+include 'java-lib'
+include 'groovy-app'

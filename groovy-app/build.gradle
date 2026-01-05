@@ -1,0 +1,18 @@
+plugins {
+    id 'groovy'
+    id 'application'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+dependencies {
+    implementation project(':java-lib')
+    implementation 'org.apache.groovy:groovy:5.0.0'
+}
+
+application {
+    mainClass = 'com.example.ChildClass'
+}
