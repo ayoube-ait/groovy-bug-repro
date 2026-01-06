@@ -1,5 +1,4 @@
-# Groovy 5 Compiler Bug Reproduction
-
+# [GROOVY-11831](https://issues.apache.org/jira/browse/GROOVY-11831): Groovy 5 Compiler Bug Reproduction 
 Minimal reproduction project for Groovy 5 compiler crash when an AST transformation adds an annotation (without explicit `@Target`) to a void method.
 
 ## Bug Description
