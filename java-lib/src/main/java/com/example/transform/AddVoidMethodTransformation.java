@@ -1,6 +1,7 @@
 package com.example.transform;
 
-import com.example.MyAnnotation;
+import com.example.MyAnnotationWithTarget;
+import com.example.MyAnnotationWithoutTarget;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
@@ -16,14 +17,19 @@ import org.codehaus.groovy.transform.GroovyASTTransformation;
 import java.lang.reflect.Modifier;
 
 /**
- * AST Transformation that adds a void method annotated with @MyAnnotation.
- * This triggers the Groovy 5 bug because @MyAnnotation has no @Target
- * (defaults to TYPE_USE) and the method returns void.
+ * AST Transformation that adds a void method annotated with an annotation.
+ *
+ * By default, uses MyAnnotationWithTarget (the fixed version that works).
+ * Set system property "useBuggyAnnotation=true" to use MyAnnotationWithoutTarget
+ * which triggers the Groovy 5 bug.
+ *
+ * @see <a href="https://issues.apache.org/jira/browse/GROOVY-11831">GROOVY-11831</a>
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class AddVoidMethodTransformation extends AbstractASTTransformation {
 
-    private static final ClassNode MY_ANNOTATION = ClassHelper.make(MyAnnotation.class);
+    private static final ClassNode ANNOTATION_WITH_TARGET = ClassHelper.make(MyAnnotationWithTarget.class);
+    private static final ClassNode ANNOTATION_WITHOUT_TARGET = ClassHelper.make(MyAnnotationWithoutTarget.class);
 
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
@@ -52,8 +58,13 @@ public class AddVoidMethodTransformation extends AbstractASTTransformation {
             body
         );
 
-        // Add @MyAnnotation to the void method - THIS TRIGGERS THE BUG!
-        method.addAnnotation(new AnnotationNode(MY_ANNOTATION));
+        // Choose annotation based on system property
+        boolean useBuggy = Boolean.getBoolean("useBuggyAnnotation");
+        ClassNode annotationToUse = useBuggy ? ANNOTATION_WITHOUT_TARGET : ANNOTATION_WITH_TARGET;
+
+        // Add annotation to the void method
+        // With ANNOTATION_WITHOUT_TARGET, this triggers the Groovy 5 bug!
+        method.addAnnotation(new AnnotationNode(annotationToUse));
 
         classNode.addMethod(method);
     }

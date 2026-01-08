@@ -1,13 +1,11 @@
 package com.example;
 
 /**
- * Parent class with a void method annotated with @MyAnnotation.
- * When a Groovy class extends this, Groovy 5 crashes trying to
- * process the annotation as a TYPE_USE on the void return type.
+ * Parent class extended by Groovy classes.
+ * The AST transformation adds an annotated void method which triggers the bug.
  */
 public class ParentClass {
 
-    @MyAnnotation
     public void doSomething() {
         System.out.println("doing something");
     }

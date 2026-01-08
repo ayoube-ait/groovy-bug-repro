@@ -10,9 +10,17 @@ java {
 
 dependencies {
     implementation project(':java-lib')
-    implementation 'org.apache.groovy:groovy:5.0.0'
+    implementation 'org.apache.groovy:groovy:5.0.3'
 }
 
 application {
     mainClass = 'com.example.ChildClass'
+}
+
+// Pass the useBuggyAnnotation property to the Groovy compiler
+tasks.withType(GroovyCompile).configureEach {
+    if (project.hasProperty('useBuggyAnnotation')) {
+        groovyOptions.fork = true
+        groovyOptions.forkOptions.jvmArgs = ['-DuseBuggyAnnotation=true']
+    }
 }
